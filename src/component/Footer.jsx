@@ -11,7 +11,7 @@ export const Footer = () => {
 
                     <div className="col-md-4 mb-3 black">
                         <h2><strong>MiaurKet</strong></h2>
-
+                        <p>Lunes a Sábados 10hs a 18:30hs</p>
                     </div>
 
                     <div className="col-md-4 mb-3 black">

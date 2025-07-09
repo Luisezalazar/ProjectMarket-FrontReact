@@ -47,7 +47,7 @@ export const Navbar = () => {
                             <NavLink to='/createOrder' className="nav-link active" onClick={handleNavItemClick}><button className='buttonNav'>CreateOrder</button></NavLink>
                         </li>
 
-                        <NavLink to='/carrito' className="nav-link active d-flex mx-2">
+                        <NavLink to='/*' className="nav-link active d-flex mx-2">
                             <Badge badgeContent={0} color="secondary">
                                 <ShoppingCart color="action" />
                             </Badge>
