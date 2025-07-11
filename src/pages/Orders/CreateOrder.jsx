@@ -90,7 +90,7 @@ export const CreateOrder = () => {
         <form onSubmit={handleSubmit} id="orderForm">
 
           {/* Customer*/}
-          <label htmlFor="customer">Select Customer: </label>
+          <label htmlFor="customer" className="bold">Select Customer: </label>
           <select id="customer" value={selectCustomer} onChange={(e) => setSelectCustomer(e.target.value)} required>
             <option value=""></option>
             {customers.map((c) => (
@@ -121,17 +121,17 @@ export const CreateOrder = () => {
           <button type="button" className="addbutton" onClick={handleAddProduct}>➕ Add product</button>
           <br />
           {/* State */}
-          <label type="radio">State: </label>
+          <label type="radio" className="bold">State: </label>
           <br />
-          <label >
+          <label className="bold">
             <input type="radio" name="state" value="pending" onChange={(e) => setState(e.target.value)} /> Pending
           </label>
 
-          <label >
+          <label className="bold">
             <input type="radio" name="state" value="inProgress" onChange={(e) => setState(e.target.value)} /> In progress
           </label>
 
-          <label >
+          <label className="bold">
             <input type="radio" name="state" value="completed" onChange={(e) => setState(e.target.value)} /> Completed
           </label>
 

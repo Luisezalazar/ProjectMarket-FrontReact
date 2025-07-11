@@ -20,7 +20,7 @@ export const Home = () => {
       <section className="test">
         <Featured></Featured>
       </section>
-
+      
       
 
 

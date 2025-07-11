@@ -51,7 +51,7 @@ export const EditProduct = () => {
         try {
 
             const response = await fetch(request)
-            
+
             const result = await response.json()
             //console.log(result)
             navigate("/*")
@@ -69,13 +69,13 @@ export const EditProduct = () => {
             <div className="form-control">
                 <form onSubmit={handleSubmit} >
 
-                    <label htmlFor="name">Name: </label>
+                    <label htmlFor="name" className="bold">Name: </label>
                     <input type="text" name="name" onChange={handleChange} value={formulary.name} placeholder=" " required />
 
-                    <label htmlFor="email">Price: </label>
+                    <label htmlFor="email" className="bold">Price: </label>
                     <input type="number" name="price" onChange={handleChange} value={formulary.price} placeholder="" required />
 
-                    <label htmlFor="Phone">Stock: </label>
+                    <label htmlFor="Phone" className="bold">Stock: </label>
                     <input type="number" name="stock" onChange={handleChange} value={formulary.stock} placeholder="" required />
 
                     <input type="submit" value="Save" />

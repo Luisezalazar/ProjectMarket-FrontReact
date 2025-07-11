@@ -47,7 +47,7 @@ export const EditOrder = () => {
   };
 
   //Order
-   const fetchOrder = async () => {
+  const fetchOrder = async () => {
     try {
       const response = await fetch(`http://localhost:3000/api/order/getOrderById/${id}`)
       const dataArray = await response.json()
@@ -118,7 +118,7 @@ export const EditOrder = () => {
         <form onSubmit={handleSubmit} id="orderForm">
 
           {/* Customer*/}
-          <label htmlFor="customer">Select Customer: </label>
+          <label htmlFor="customer" className="bold">Select Customer: </label>
           <select id="customer" value={selectCustomer} onChange={(e) => setSelectCustomer(e.target.value)} required>
             <option value=""></option>
             {customers.map((c) => (
@@ -149,18 +149,18 @@ export const EditOrder = () => {
           <button type="button" className="addbutton" onClick={handleAddProduct}>➕ Add product</button>
           <br />
           {/* State */}
-          <label type="radio">State: </label>
+          <label type="radio" className="bold">State: </label>
           <br />
-          <label >
-            <input type="radio" name="state" value="pending" checked={state==="pending"} onChange={(e) => setState(e.target.value)} /> Pending
+          <label className="bold">
+            <input type="radio" name="state" value="pending" checked={state === "pending"} onChange={(e) => setState(e.target.value)} /> Pending
           </label>
 
-          <label >
-            <input type="radio" name="state" value="inProgress" checked={state==="inProgress"} onChange={(e) => setState(e.target.value)} /> In progress
+          <label className="bold">
+            <input type="radio" name="state" value="inProgress" checked={state === "inProgress"} onChange={(e) => setState(e.target.value)} /> In progress
           </label>
 
-          <label >
-            <input type="radio" name="state" value="completed" checked={state==="completed"} onChange={(e) => setState(e.target.value)} /> Completed
+          <label className="bold" >
+            <input type="radio" name="state" value="completed" checked={state === "completed"} onChange={(e) => setState(e.target.value)} /> Completed
           </label>
 
           <input type="submit" value="Update" />

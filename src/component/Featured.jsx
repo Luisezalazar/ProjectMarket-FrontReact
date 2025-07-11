@@ -1,5 +1,8 @@
 import { useRef } from "react";
 import img from "../../public/img/Miaurket.png"
+import ArrowBackIosNewIcon  from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
 
 export const Featured = () => {
 
@@ -69,7 +72,7 @@ export const Featured = () => {
     return (
 
         <div className="featuredCarousel-container">
-            <button className="arrow left" onClick={scrollLeft}>←</button>
+            <button className="arrow left" onClick={scrollLeft} ><ArrowBackIosNewIcon/></button>
             <div className="featuredCarousel" ref={carouselRef}>
                 {products.map((product) => (
                     <div className="featuredProduct-card" key={product.id}>
@@ -79,7 +82,7 @@ export const Featured = () => {
                     </div>
                 ))}
             </div>
-            <button className="arrow right" onClick={scrollRight}>→</button>
+            <button className="arrow right" onClick={scrollRight}><ArrowForwardIosIcon/></button>
         </div>
 
     )

@@ -45,13 +45,13 @@ export const CreateCustomer = () => {
       <div className="form-control">
         <form onSubmit={handleSubmit}>
 
-          <label htmlFor="name">Name: </label>
+          <label htmlFor="name" className="bold">Name: </label>
           <input type="text" name="name" onChange={handleChange} value={formulary.name} placeholder=" " required />
 
-          <label htmlFor="email">Email: </label>
+          <label htmlFor="email" className="bold">Email: </label>
           <input type="email" name="email" onChange={handleChange} value={formulary.email} placeholder="" required />
 
-          <label htmlFor="Phone">Phone: </label>
+          <label htmlFor="Phone" className="bold">Phone: </label>
           <input type="text" name="phone" onChange={handleChange} value={formulary.phone} placeholder="" required />
 
           <input type="submit" value="Create" />
