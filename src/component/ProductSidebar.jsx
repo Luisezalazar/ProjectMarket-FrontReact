@@ -8,7 +8,7 @@ export const ProductSidebar = ({
   return (
     <div className="products-sidebar">
       <div className="sidebar-section">
-        <h3>Buscar Productos</h3>
+        <h3 className="bold">Buscar Productos</h3>
         <div className="search-container">
           <input
             type="text"
@@ -22,7 +22,8 @@ export const ProductSidebar = ({
 
       <div className="sidebar-section">
         <h3>Categorías</h3>
-        <div className="filter-options">
+        {/* Desktop - Radio buttons */}
+        <div className="filter-options d-none d-md-block">
           <label className="filter-option">
             <input
               type="radio"
@@ -31,7 +32,7 @@ export const ProductSidebar = ({
               checked={selectedCategory === ""}
               onChange={(e) => setSelectedCategory(e.target.value)}
             />
-            <span>Todas las categorías</span>
+            <span className="bold">Todas las categorías</span>
           </label>
           {categories.map((category) => (
             <label key={category} className="filter-option">
@@ -42,9 +43,25 @@ export const ProductSidebar = ({
                 checked={selectedCategory === category}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               />
-              <span>{category}</span>
+              <span className="bold">{category}</span>
             </label>
           ))}
+        </div>
+        
+        {/* Mobile - Select dropdown */}
+        <div className="d-md-none">
+          <select
+            className="category-select-mobile"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="">Todas las categorías</option>
+            {categories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -52,7 +69,8 @@ export const ProductSidebar = ({
         <button 
           className="clear-filters-btn"
           onClick={() => {
-            setSearchTerm("");
+            setSearchTerm("")
+            setSelectedCategory("");
           }}
         >
           Limpiar Filtros

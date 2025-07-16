@@ -92,7 +92,7 @@ export const Products = () => {
         
         <div className="products-grid-container">
           <div className="products-header">
-            <h2>Productos ({filteredProducts.length})</h2>
+            <h2>Nuestros productos</h2>
           </div>
           
           <div className="products-grid">
