@@ -51,7 +51,7 @@ export const Navbar = () => {
                                 Products
                             </a>
                             <ul className="dropdown-menu">
-                                
+
                                 <li><a className="dropdown-item" href="#" ></a></li>
                                 <li><NavLink to="/products" className="dropdown-item bold" href="#">Ver todos los productos</NavLink></li>
                                 <li><hr className="dropdown-divider"/></li>
@@ -59,19 +59,19 @@ export const Navbar = () => {
                                 <li><a className="dropdown-item" href="#">subCategoria1</a></li>
                                 <li><a className="dropdown-item" href="#">subCaterogia2</a></li>
                                 <li><a className="dropdown-item" href="#">subCategoria3</a></li>
-                                <li><hr className="dropdown-divider"/></li>
+                                <li><hr className="dropdown-divider" /></li>
                                 <li><a className="dropdown-item bold" href="#">Categoria2</a></li>
                                 <li><a className="dropdown-item" href="#">subCategoria1</a></li>
                                 <li><a className="dropdown-item" href="#">subCaterogia2</a></li>
                                 <li><a className="dropdown-item" href="#">subCategoria3</a></li>
-                                 <li><hr className="dropdown-divider"/></li>
+                                <li><hr className="dropdown-divider" /></li>
                                 <li><a className="dropdown-item bold" href="#">Categoria3</a></li>
                                 <li><a className="dropdown-item" href="#">subCategoria1</a></li>
                                 <li><a className="dropdown-item" href="#">subCaterogia2</a></li>
                                 <li><a className="dropdown-item" href="#">subCategoria3</a></li>
-                                
+
                             </ul>
-                            
+
                         </li>
                         <li className="nav-item">
                             <NavLink to='/seeCustomers' className="nav-link active d-flex bold" onClick={handleNavItemClick}><span>👤</span><span>Customers</span></NavLink>
