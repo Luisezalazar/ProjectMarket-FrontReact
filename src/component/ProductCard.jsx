@@ -1,14 +1,32 @@
-export const ProductCard = ({ img, title, price }) => {
+export const ProductCard = ({ product, onAddToCart, onViewProduct }) => {
   return (
-    <>
-        <div className="card-container  me-2">
-          <img src="../../public/img/Miaurket.png" className="card-img-top" alt="..." />
-          <div className="card-body">
-            <h5 className="card-title">{title}</h5>
-            <p><strong>${price}</strong></p>
-            <p className="small">Disponible en 3 cuotas</p>
-          </div>
+    <div className="product-card">
+      <div className="product-image">
+        <img src={product.img} alt={product.title} />
+      </div>
+      
+      <div className="product-info">
+        <h3 className="product-title">{product.title}</h3>
+        <p className="product-price">${product.price.toLocaleString()}</p>
+        <div className="product-details">
+          <span className="product-category">{product.category}</span>
         </div>
-    </>
-  )
-}
+      </div>
+      
+      <div className="product-actions">
+        <button 
+          className="btn-add-cart"
+          onClick={() => onAddToCart(product)}
+        >
+          Añadir al Carrito
+        </button>
+        <button 
+          className="btn-view-product"
+          onClick={() => onViewProduct(product)}
+        >
+          Ver Producto
+        </button>
+      </div>
+    </div>
+  );
+};
