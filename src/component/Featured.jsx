@@ -1,89 +1,125 @@
-import { useRef } from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import img from "../../public/img/Miaurket.png"
-import ArrowBackIosNewIcon  from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 export const Featured = () => {
+    const navigate = useNavigate();
+    const [currentSlide, setCurrentSlide] = useState(0);
 
     const products = [
         {
             id: 1,
             title: "Florera En Combo Con Accesorios",
             price: 29000,
-            img: `${img}`,
+            img: img,
+            category: "Florera"
         },
         {
             id: 2,
             title: "Morral Bando Ceniza",
             price: 36000,
-            img: `${img}`,
+            img: img,
+            category: "Morral"
         },
         {
             id: 3,
             title: "Sabal Messi",
             price: 28000,
-            img: `${img}`,
+            img: img,
+            category: "Tabaquera"
         },
         {
             id: 4,
             title: "Tote Bag Negra Actitud",
             price: 32000,
-            img: `${img}`,
+            img: img,
+            category: "Tote"
         },
         {
             id: 5,
-            title: "Tote Bag sssNegra Actitud",
+            title: "Tote Bag Roja Actitud",
             price: 32000,
-            img: `${img}`,
+            img: img,
+            category: "Tote"
         },
         {
             id: 6,
-            title: "Tote Bag ddNegra Actitud",
+            title: "Tote Bag Azul Actitud",
             price: 32000,
-            img: `${img}`,
+            img: img,
+            category: "Tote"
         },
         {
             id: 7,
-            title: "Tote Bag ffNegra Actitud",
-            price: 32000,
-            img: `${img}`,
+            title: "Florera Decorativa",
+            price: 25000,
+            img: img,
+            category: "Florera"
         },
         {
             id: 8,
-            title: "Tote Bag ggNegra Actitud",
-            price: 32000,
-            img: `${img}`,
-        },
-        
+            title: "Florera Premium",
+            price: 35000,
+            img: img,
+            category: "Florera"
+        }
     ];
 
+    const maxSlides = Math.max(0, products.length - 4);
 
-    const carouselRef = useRef(null);
-
-    const scrollLeft = () => {
-        carouselRef.current.scrollBy({ left: -438, behavior: "smooth" });
+    const nextSlide = () => {
+        setCurrentSlide((prev) => Math.min(prev + 1, maxSlides));
     };
 
-    const scrollRight = () => {
-        carouselRef.current.scrollBy({ left: 438, behavior: "smooth" });
+    const prevSlide = () => {
+        setCurrentSlide((prev) => Math.max(prev - 1, 0));
+    };
+
+    const handleViewProduct = (product) => {
+        navigate(`/product/${product.id}`, { state: { product } });
     };
 
     return (
-
         <div className="featuredCarousel-container">
-            <button className="arrow left" onClick={scrollLeft} ><ArrowBackIosNewIcon/></button>
-            <div className="featuredCarousel" ref={carouselRef}>
-                {products.map((product) => (
-                    <div className="featuredProduct-card" key={product.id}>
-                        <img src={product.img} alt={product.title} />
-                        <h6>{product.title}</h6>
-                        <p>${product.price.toLocaleString()}</p>
-                    </div>
-                ))}
+            {products.length > 4 && (
+                <button 
+                    className="featured-arrow featured-arrow-left" 
+                    onClick={prevSlide}
+                    disabled={currentSlide === 0}
+                >
+                    <ChevronLeft />
+                </button>
+            )}
+            
+            <div className="featuredCarousel-wrapper">
+                <div 
+                    className="featuredCarousel"
+                    style={{ transform: `translateX(-${currentSlide * 25}%)` }}
+                >
+                    {products.map((product) => (
+                        <div 
+                            className="featuredProduct-card" 
+                            key={product.id}
+                            onClick={() => handleViewProduct(product)}
+                        >
+                            <img src={product.img} alt={product.title} />
+                            <h6>{product.title}</h6>
+                            <p>${product.price.toLocaleString()}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <button className="arrow right" onClick={scrollRight}><ArrowForwardIosIcon/></button>
+            
+            {products.length > 4 && (
+                <button 
+                    className="featured-arrow featured-arrow-right" 
+                    onClick={nextSlide}
+                    disabled={currentSlide >= maxSlides}
+                >
+                    <ChevronRight />
+                </button>
+            )}
         </div>
-
     )
 }

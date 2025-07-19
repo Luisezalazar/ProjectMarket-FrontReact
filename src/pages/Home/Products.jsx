@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProductCard } from "../../component/ProductCard";
 import { ProductSidebar } from "../../component/ProductSidebar";
 import img from "../../../public/img/Miaurket.png";
 
 export const Products = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -57,6 +59,125 @@ export const Products = () => {
       img: img,
       category: "Florera"
     },
+    {
+      id: 8,
+      title: "Florera Premium",
+      price: 35000,
+      img: img,
+      category: "Florera"
+    },
+    {
+      id: 9,
+      title: "Florera En Combo Con Accesorios222",
+      price: 29000,
+      img: img,
+      category: "Florera"
+    },
+    {
+      id: 10,
+      title: "Morral Bando Ceniza22",
+      price: 36000,
+      img: img,
+      category: "Morral"
+    },
+    {
+      id: 11,
+      title: "Sabal Messi22",
+      price: 28000,
+      img: img,
+      category: "Tabaquera"
+    },
+    {
+      id: 12,
+      title: "Tote Bag Negra Actitud22",
+      price: 32000,
+      img: img,
+      category: "Tote"
+    },
+    {
+      id: 13,
+      title: "Tote Bag Roja Actitud22",
+      price: 32000,
+      img: img,
+      category: "Tote"
+    },
+    {
+      id: 14,
+      title: "Tote Bag Azul Actitud22",
+      price: 32000,
+      img: img,
+      category: "Tote"
+    },
+    {
+      id: 15,
+      title: "Florera Decorativa22",
+      price: 25000,
+      img: img,
+      category: "Florera"
+    },
+    {
+      id: 16,
+      title: "Florera Premium22",
+      price: 35000,
+      img: img,
+      category: "Florera"
+    },
+    {
+      id: 17,
+      title: "Florera En Combo Con Accesorios222",
+      price: 29000,
+      img: img,
+      category: "Florera"
+    },
+    {
+      id: 18,
+      title: "Morral Bando Ceniza22",
+      price: 36000,
+      img: img,
+      category: "Morral"
+    },
+    {
+      id: 19,
+      title: "Sabal Messi22",
+      price: 28000,
+      img: img,
+      category: "Tabaquera"
+    },
+    {
+      id: 20,
+      title: "Tote Bag Negra Actitud22",
+      price: 32000,
+      img: img,
+      category: "Tote"
+    },
+    {
+      id: 21,
+      title: "Tote Bag Roja Actitud22",
+      price: 32000,
+      img: img,
+      category: "Tote"
+    },
+    {
+      id: 22,
+      title: "Tote Bag Azul Actitud22",
+      price: 32000,
+      img: img,
+      category: "Tote"
+    },
+    {
+      id: 23,
+      title: "Florera Decorativa22",
+      price: 25000,
+      img: img,
+      category: "Florera"
+    },
+    {
+      id: 24,
+      title: "Florera Premium22",
+      price: 35000,
+      img: img,
+      category: "Florera"
+    }
     
   ];
 
@@ -75,8 +196,7 @@ export const Products = () => {
   };
 
   const handleViewProduct = (product) => {
-    console.log("Ver producto:", product);
-    // Aquí implementarías la navegación al detalle del producto
+    navigate(`/product/${product.id}`, { state: { product } });
   };
 
   return (

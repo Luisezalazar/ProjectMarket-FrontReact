@@ -4,6 +4,7 @@ import img from "../../../public/img/Miaurket.png"
 import { ModelProductCard } from "../../component/ModelProductCard"
 import { OtherProducts } from "../../component/OtherProducts"
 import { Featured } from "../../component/Featured"
+import { NavLink } from "react-router-dom"
 
 export const Home = () => {
 
@@ -12,7 +13,7 @@ export const Home = () => {
       <h1 className="intro"><strong>¡Bienvenido a MiaurKet!</strong></h1>
 
       <section className="first">
-        <button className="button-first">Ver Productos</button>
+        <NavLink to="/products"><button className="button-first">Ver Productos</button></NavLink>
       </section>
 
       {/* Carousel*/}
@@ -22,7 +23,7 @@ export const Home = () => {
       </section>
       
       
-
+      
 
       <h1 className="intro"><strong>Nuestros modelos</strong></h1>
       {/* Model Products*/}
