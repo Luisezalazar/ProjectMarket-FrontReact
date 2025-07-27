@@ -212,6 +212,7 @@ export const SeeProduct = () => {
   };
 
   const handleViewSimilarProduct = (similarProduct) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(`/product/${similarProduct.id}`, { state: { product: similarProduct } });
   };
 
