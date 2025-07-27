@@ -1667,4 +1667,22 @@ duct Detail Page Styles */
         width: 35px;
         height: 35px;
     }
+}/* Model
+ Cards Hover Effects */
+.modelCard-container {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.modelCard-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modelCard-container:hover .modelCard-title {
+    color: var(--navbar-color);
+}
+
+.modelCard-container:active {
+    transform: translateY(-2px);
 }

@@ -1,11 +1,13 @@
 import ShoppingCart from '@mui/icons-material/ShoppingCart'
 import Badge from '@mui/material/Badge'
 import { useEffect, useRef } from 'react';
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import SearchIcon from '@mui/icons-material/Search';
+import category from '../component/category.json'
 
 export const Navbar = () => {
-
+    
+    const navigate = useNavigate();
     const collapseRef = useRef(null);
 
     useEffect(() => {
@@ -21,6 +23,9 @@ export const Navbar = () => {
             window.bootstrap.Collapse.getInstance(collapseRef.current)?.hide();
         }
     };
+    const handleModelClick = (category) => {
+        navigate(`/products?category=${encodeURIComponent(category)}`);
+    }
 
     return (
         <nav className="navbar navbar-color navbar-expand-lg navbar-shadow">
@@ -69,10 +74,15 @@ export const Navbar = () => {
                                 <li><NavLink to="/products" className="dropdown-item" onClick={handleNavItemClick}>Ver todos los productos</NavLink></li>
                                 <li><hr className="dropdown-divider" /></li>
                                 <li><h6 className="dropdown-header">Categorías</h6></li>
-                                <li><a className="dropdown-item" href="#">Tabaqueras</a></li>
-                                <li><a className="dropdown-item" href="#">Morrales</a></li>
-                                <li><a className="dropdown-item" href="#">Totes</a></li>
-                                <li><a className="dropdown-item" href="#">Floreras</a></li>
+                                {category.map((c) =>(
+                                    <li 
+                                    key={c.id}
+                                    onClick={()=>handleModelClick(c.category)}
+                                    style={{cursor:'pointer'}}
+                                    >
+                                        <a className='dropdown-item'>{c.name}</a>
+                                    </li>
+                                ))}
                             </ul>
                         </li>
 

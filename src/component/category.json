@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "name":"Floreras",
+        "category": "Florera"
+    },
+    {
+        "id": 2,
+        "name":"Tabaqueras",
+        "category": "Tabaquera"
+    },
+    {
+        "id": 3,
+        "name":"Morrales",
+        "category": "Morral"
+    },
+    {
+        "id": 4,
+        "name": "Totes",
+        "category": "Tote"
+    }
+]

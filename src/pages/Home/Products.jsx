@@ -1,13 +1,24 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ProductCard } from "../../component/ProductCard";
 import { ProductSidebar } from "../../component/ProductSidebar";
 import img from "../../../public/img/Miaurket.png";
 
 export const Products = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+
+  // Read param url
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const categoryFromUrl = urlParams.get('category');
+    
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [location.search]);
 
   const products = [
     {
@@ -192,7 +203,7 @@ export const Products = () => {
 
   const handleAddToCart = (product) => {
     console.log("Añadido al carrito:", product);
-    // Aquí implementarías la lógica del carrito
+    //Implement logic 
   };
 
   const handleViewProduct = (product) => {

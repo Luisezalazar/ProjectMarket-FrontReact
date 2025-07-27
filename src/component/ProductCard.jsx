@@ -2,7 +2,7 @@ export const ProductCard = ({ product, onAddToCart, onViewProduct }) => {
   return (
     <div className="product-card">
       <div className="product-image">
-        <img src={product.img} alt={product.title} />
+        <img  onClick={() => onViewProduct(product)} src={product.img} style={{cursor:'pointer'}} alt={product.title} />
       </div>
       
       <div className="product-info">
@@ -20,12 +20,7 @@ export const ProductCard = ({ product, onAddToCart, onViewProduct }) => {
         >
           Añadir al Carrito
         </button>
-        <button 
-          className="btn-view-product"
-          onClick={() => onViewProduct(product)}
-        >
-          Ver Producto
-        </button>
+        
       </div>
     </div>
   );

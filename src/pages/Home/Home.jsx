@@ -28,7 +28,7 @@ export const Home = () => {
       <h1 className="intro"><strong>Nuestros modelos</strong></h1>
       {/* Model Products*/}
       <section className="modelProducts">
-        <ModelProductCard />
+        <ModelProductCard/>
       </section>
 
       {/*Other models*/}
