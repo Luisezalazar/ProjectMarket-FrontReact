@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowBack, LocalShipping, Security, CreditCard, ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { useCart } from "../context/CartContext";
 import img from "../../public/img/Miaurket.png";
 
 export const SeeProduct = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const { product } = location.state || {};
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -202,8 +204,9 @@ export const SeeProduct = () => {
     .filter(p => p.category === product.category && p.id !== product.id); // Todos los productos similares, sin límite
 
   const handleAddToCart = () => {
-    console.log(`Añadido al carrito: ${quantity} x ${product.title}`);
-    // Aquí implementarías la lógica del carrito
+    addToCart(product, quantity);
+    // Opcional: mostrar notificación de éxito
+    alert(`${quantity} x ${product.title} añadido al carrito`);
   };
 
   const handleBuyNow = () => {

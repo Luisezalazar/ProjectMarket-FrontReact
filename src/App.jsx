@@ -1,6 +1,8 @@
 import { Navigate, Routes, Route } from "react-router-dom"
+import { CartProvider } from "./context/CartContext"
 import { Navbar } from "./component/Navbar"
 import { Footer } from "./component/Footer"
+import { CartSidebar } from "./component/CartSidebar"
 import { ProductsPage } from "./pages/Products/ProductsPage"
 import { OrdersPage } from "./pages/Orders/OrdersPage"
 import { CustomersPage } from "./pages/Customers/CustomersPage"
@@ -16,7 +18,7 @@ import { SeeProduct } from "./component/SeeProduct"
 
 export const App = () => {
   return (
-    <>
+    <CartProvider>
       <Navbar></Navbar>
       <div className="container">
         <Routes>
@@ -39,6 +41,7 @@ export const App = () => {
         </Routes>
       </div>
       <Footer></Footer>
-    </>
+      <CartSidebar />
+    </CartProvider>
   )
 }

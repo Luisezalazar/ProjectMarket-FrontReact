@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
 import { ProductCard } from "../../component/ProductCard";
 import { ProductSidebar } from "../../component/ProductSidebar";
 import img from "../../../public/img/Miaurket.png";
@@ -7,6 +8,7 @@ import img from "../../../public/img/Miaurket.png";
 export const Products = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { addToCart } = useCart();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -202,8 +204,8 @@ export const Products = () => {
   });
 
   const handleAddToCart = (product) => {
-    console.log("Añadido al carrito:", product);
-    //Implement logic 
+    addToCart(product, 1);
+    alert(`${product.title} añadido al carrito`);
   };
 
   const handleViewProduct = (product) => {

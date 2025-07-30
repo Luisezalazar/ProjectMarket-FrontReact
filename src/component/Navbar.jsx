@@ -3,12 +3,14 @@ import Badge from '@mui/material/Badge'
 import { useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom'
 import SearchIcon from '@mui/icons-material/Search';
+import { useCart } from '../context/CartContext';
 import category from '../component/category.json'
 
 export const Navbar = () => {
     
     const navigate = useNavigate();
     const collapseRef = useRef(null);
+    const { getTotalItems, toggleCart } = useCart();
 
     useEffect(() => {
         if (collapseRef.current) {
@@ -113,11 +115,17 @@ export const Navbar = () => {
                         </li>
 
                         <li className="nav-item">
-                            <NavLink to='/cart' className="nav-link d-flex align-items-center" onClick={handleNavItemClick}>
-                                <Badge badgeContent={0} color="secondary">
+                            <button 
+                                className="nav-link d-flex align-items-center cart-nav-btn" 
+                                onClick={() => {
+                                    toggleCart();
+                                    handleNavItemClick();
+                                }}
+                            >
+                                <Badge badgeContent={getTotalItems()} color="secondary">
                                     <ShoppingCart />
                                 </Badge>
-                            </NavLink>
+                            </button>
                         </li>
                     </div>
                 </div>
