@@ -49,6 +49,7 @@ export const ProductsPage = () => {
               <th>Name</th>
               <th>Price</th>
               <th>Stock</th>
+              <th>Categoría</th>
               <th>Options</th>
 
             </tr>
@@ -59,6 +60,7 @@ export const ProductsPage = () => {
                 <td>{product.name}</td>
                 <td>{product.price}</td>
                 <td>{product.stock}</td>
+                <td>{product.category}</td>
                 <td>
                   <button type='button' className='button-img' onClick={() => handleDelete(product.id)}><img className='img' src="/img/eliminar.png" /></button>
                   <NavLink to={`/editProduct/${product.id}`}><button type='button' className='button-img'><img className='img' src="/img/boton-editar.png" /></button></NavLink>

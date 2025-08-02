@@ -206,7 +206,7 @@ export const SeeProduct = () => {
   const handleAddToCart = () => {
     addToCart(product, quantity);
     // Opcional: mostrar notificación de éxito
-    alert(`${quantity} x ${product.title} añadido al carrito`);
+    //alert(`${quantity} x ${product.title} añadido al carrito`);
   };
 
   const handleBuyNow = () => {

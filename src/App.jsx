@@ -15,6 +15,8 @@ import { EditOrder } from "./pages/Orders/EditOrder"
 import { Home } from "./pages/Home/Home"
 import { Products } from "./pages/Home/Products"
 import { SeeProduct } from "./component/SeeProduct"
+import { Payment } from "./pages/Payment/Payment"
+import { PaymentMethods } from "./pages/Payment/PaymentMethods"
 
 export const App = () => {
   return (
@@ -22,10 +24,13 @@ export const App = () => {
       <Navbar></Navbar>
       <div className="container">
         <Routes>
+          {/* PayMent */}
+          <Route path="/payment" element={<PaymentMethods/>}></Route>
           {/* Home */}
           <Route path='/*' element={<Home />}></Route>
           <Route path="/products" element={<Products />}></Route>
           <Route path="/product/:id" element={<SeeProduct />}></Route>
+          <Route path="/payment" element={<Payment />}></Route>
           {/* Products */}
           <Route path='/seeProducts' element={<ProductsPage />}></Route>
           <Route path="/createProduct" element={<CreateProduct />}></Route>

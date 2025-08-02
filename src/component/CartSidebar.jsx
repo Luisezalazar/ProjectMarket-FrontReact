@@ -1,16 +1,27 @@
+
 import { useCart } from '../context/CartContext';
 import { Close, Add, Remove, ShoppingBag, Delete } from '@mui/icons-material';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export const CartSidebar = () => {
-  const { 
-    items, 
-    isOpen, 
-    toggleCart, 
-    updateQuantity, 
-    removeFromCart, 
-    clearCart, 
-    getTotalPrice 
+  const {
+    items,
+    isOpen,
+    email,
+    setEmail,
+    toggleCart,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+    getTotalPrice,
+    
   } = useCart();
+
+  const [state, setState] = useState(false);
+  const navigate = useNavigate();
+  const [error, setError] = useState("")
+
 
   const handleQuantityChange = (id, newQuantity) => {
     if (newQuantity < 1) {
@@ -19,18 +30,28 @@ export const CartSidebar = () => {
       updateQuantity(id, newQuantity);
     }
   };
+  const handleTransaction = () => {
 
-  const handleCheckout = () => {
-    alert('Funcionalidad de checkout - Por implementar');
-    // Aquí implementarías la lógica de checkout
-  };
+    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+      setError('Por favor ingresá un email válido.');
+      setTimeout(() => setError(''), 2000);
+      return;
+    }
+
+    navigate("/payment")
+    toggleCart()
+
+  }
+
+  console.log("El email es " ,email)
+
 
   return (
     <>
       {/* Overlay */}
       {isOpen && (
-        <div 
-          className="cart-overlay" 
+        <div
+          className="cart-overlay"
           onClick={toggleCart}
         />
       )}
@@ -65,7 +86,7 @@ export const CartSidebar = () => {
                     <div className="cart-item-image">
                       <img src={item.img} alt={item.title} />
                     </div>
-                    
+
                     <div className="cart-item-details">
                       <h4 className="cart-item-title">{item.title}</h4>
                       <p className="cart-item-category">{item.category}</p>
@@ -74,22 +95,22 @@ export const CartSidebar = () => {
 
                     <div className="cart-item-actions">
                       <div className="cart-quantity-controls">
-                        <button 
+                        <button
                           className="cart-qty-btn"
                           onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
                         >
                           <Remove />
                         </button>
                         <span className="cart-quantity">{item.quantity}</span>
-                        <button 
+                        <button
                           className="cart-qty-btn"
                           onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
                         >
                           <Add />
                         </button>
                       </div>
-                      
-                      <button 
+
+                      <button
                         className="cart-remove-btn"
                         onClick={() => removeFromCart(item.id)}
                       >
@@ -111,21 +132,42 @@ export const CartSidebar = () => {
                     <strong>Total: ${getTotalPrice().toLocaleString()}</strong>
                   </div>
                 </div>
+                {state ? (
+                  <>
+                    <div className="cart-actions">
+                      <p className='bold' style={{textAlign:"center"}}>Coloque su mail para continuar</p>
+                      {error && (
+                        <div className="error">
+                            {error}
+                        </div>
+                    )}
+                      <input type="email" value={email || ''} onChange={(e)=> setEmail(e.target.value)} placeholder='mail@mail.com'/>
+                      <button className="cart-clear-btn" onClick={() => setState(false)}>
+                        Volver
+                      </button>
+                      <button className="cart-checkout-btn" onClick={handleTransaction}> 
+                        Continuar
+                      </button>
+                      
+                    </div>
+                  </>
+                ) : (
+                  <div className="cart-actions">
+                    <button className="cart-clear-btn" onClick={clearCart}>
+                      Vaciar Carrito
+                    </button>
+                    <button
+                      className="cart-checkout-btn"
+                      onClick={()=> setState(true)}
+                    >
+                      Pagar con Transferencia/CBU
+                    </button>
+                    <button className="cart-checkout-btn">
+                      Pagar con MercadoPago
+                    </button>
+                  </div>
+                )}
 
-                <div className="cart-actions">
-                  <button 
-                    className="cart-clear-btn"
-                    onClick={clearCart}
-                  >
-                    Vaciar Carrito
-                  </button>
-                  <button 
-                    className="cart-checkout-btn"
-                    onClick={handleCheckout}
-                  >
-                    Finalizar Compra
-                  </button>
-                </div>
               </div>
             </>
           )}

@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from 'react';
+import { createContext, useContext, useReducer, useState } from 'react';
 
 // Acciones del carrito
 const CART_ACTIONS = {
@@ -79,7 +79,7 @@ const cartReducer = (state, action) => {
 // Estado inicial
 const initialState = {
     items: [],
-    isOpen: false
+    isOpen: false,
 };
 
 // Acción para toggle del carrito
@@ -91,6 +91,8 @@ const CartContext = createContext();
 // Provider del carrito
 export const CartProvider = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, initialState);
+
+    const [email, setEmail] = useState();
 
     // Funciones del carrito
     const addToCart = (product, quantity = 1) => {
@@ -136,6 +138,9 @@ export const CartProvider = ({ children }) => {
         return item ? item.quantity : 0;
     };
 
+    const getEmail = () => {
+        return email;
+    }
     const value = {
         items: state.items,
         isOpen: state.isOpen,
@@ -146,7 +151,10 @@ export const CartProvider = ({ children }) => {
         toggleCart,
         getTotalItems,
         getTotalPrice,
-        getItemQuantity
+        getItemQuantity,
+        getEmail,
+        email,
+        setEmail
     };
 
     return (

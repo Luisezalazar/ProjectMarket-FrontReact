@@ -5,6 +5,7 @@ export const CreateProduct = () => {
 
     const [formulary, setFormulary] = useState({
         name: "",
+        category: "",
         price: "",
         stock: ""
     })
@@ -46,6 +47,13 @@ export const CreateProduct = () => {
 
                     <label htmlFor="name" className="bold">Name: </label>
                     <input type="text" name="name" onChange={handleChange} value={formulary.name} placeholder=" " required />
+
+                    <label htmlFor="category" className="bold">Category: </label>
+                    <input list="browsers" name="category" id="category" className="listCategory" />
+                    <datalist id="browsers">
+                        <option value="Tabaquera"></option>
+                        <option value="Florera"></option>
+                    </datalist>
 
                     <label htmlFor="email" className="bold">Price: </label>
                     <input type="number" name="price" onChange={handleChange} value={formulary.price} placeholder="" required />
