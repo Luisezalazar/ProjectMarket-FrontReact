@@ -8,10 +8,12 @@ export const EditProduct = () => {
         name: "",
         price: "",
         stock: "",
-        images: [] 
+        images: []
     })
 
     const [existingImages, setExistingImages] = useState([])
+    const [newImagePreviews, setNewImagePreviews] = useState([])
+    const [imagesToDelete, setImagesToDelete] = useState([])
 
     const navigate = useNavigate();
 
@@ -25,7 +27,7 @@ export const EditProduct = () => {
                     name: data.name,
                     price: data.price,
                     stock: data.stock,
-                    images: [] 
+                    images: []
                 })
                 setExistingImages(data.images || [])
             } catch (error) {
@@ -34,6 +36,15 @@ export const EditProduct = () => {
         }
         getProduct()
     }, [id])
+
+    // Cleanup memory on unmount
+    useEffect(() => {
+        return () => {
+            newImagePreviews.forEach(preview => {
+                URL.revokeObjectURL(preview.url)
+            })
+        }
+    }, [])
 
     // Form values
     const handleChange = (e) => {
@@ -45,10 +56,77 @@ export const EditProduct = () => {
     }
 
     const handleFileChange = (e) => {
+        const files = Array.from(e.target.files)
         setFormulary(prev => ({
             ...prev,
-            images: e.target.files // FileList
+            images: files
         }))
+
+        // Create previews for new images
+        const previews = files.map(file => ({
+            file,
+            url: URL.createObjectURL(file),
+            id: Date.now() + Math.random()
+        }))
+        setNewImagePreviews(prev => [...prev, ...previews])
+    }
+
+    // Remove existing image
+    const removeExistingImage = (index) => {
+        const imageToDelete = existingImages[index]
+        setImagesToDelete(prev => [...prev, imageToDelete.id])
+        setExistingImages(prev => prev.filter((_, i) => i !== index))
+    }
+
+    // Remove new image preview
+    const removeNewImage = (index) => {
+        const imageToRemove = newImagePreviews[index]
+        URL.revokeObjectURL(imageToRemove.url) // Clean up memory
+        setNewImagePreviews(prev => prev.filter((_, i) => i !== index))
+        setFormulary(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== index)
+        }))
+    }
+
+    // Drag and drop for existing images
+    const handleDragStart = (e, index, type) => {
+        e.dataTransfer.setData("text/plain", JSON.stringify({ index, type }))
+    }
+
+    const handleDragOver = (e) => {
+        e.preventDefault()
+    }
+
+    const handleDrop = (e, dropIndex, dropType) => {
+        e.preventDefault()
+        const dragData = JSON.parse(e.dataTransfer.getData("text/plain"))
+        const { index: dragIndex, type: dragType } = dragData
+
+        if (dragType === dropType) {
+            if (dragType === "existing") {
+                const newImages = [...existingImages]
+                const draggedImage = newImages[dragIndex]
+                newImages.splice(dragIndex, 1)
+                newImages.splice(dropIndex, 0, draggedImage)
+                setExistingImages(newImages)
+            } else if (dragType === "new") {
+                const newPreviews = [...newImagePreviews]
+                const newFiles = [...formulary.images]
+
+                const draggedPreview = newPreviews[dragIndex]
+                const draggedFile = newFiles[dragIndex]
+
+                newPreviews.splice(dragIndex, 1)
+                newPreviews.splice(dropIndex, 0, draggedPreview)
+
+                newFiles.splice(dragIndex, 1)
+                newFiles.splice(dropIndex, 0, draggedFile)
+
+                setNewImagePreviews(newPreviews)
+                setFormulary(prev => ({ ...prev, images: newFiles }))
+            }
+        }
     }
 
     const handleSubmit = async (e) => {
@@ -59,7 +137,21 @@ export const EditProduct = () => {
         formData.append("price", formulary.price)
         formData.append("stock", formulary.stock)
 
-        
+        // Add images to delete
+        if (imagesToDelete.length > 0) {
+            formData.append("imagesToDelete", JSON.stringify(imagesToDelete))
+        }
+
+        // Add existing images order
+        if (existingImages.length > 0) {
+            const existingImagesOrder = existingImages.map((img, index) => ({
+                id: img.id,
+                order: index
+            }))
+            formData.append("existingImagesOrder", JSON.stringify(existingImagesOrder))
+        }
+
+        // Add new images
         if (formulary.images && formulary.images.length > 0) {
             for (let i = 0; i < formulary.images.length; i++) {
                 formData.append("images", formulary.images[i])
@@ -96,19 +188,105 @@ export const EditProduct = () => {
                     <input type="number" name="stock" onChange={handleChange} value={formulary.stock} placeholder="" required />
 
                     <label htmlFor="images" className="bold">Existing Images:</label>
-                    <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                    <div style={{ display: "flex", gap: "10px", marginBottom: "10px", flexWrap: "wrap" }}>
                         {existingImages.map((img, idx) => (
-                            <img
+                            <div
                                 key={idx}
-                                src={img.url}
-                                alt={`Product ${idx + 1}`}
-                                style={{ width: "150px", height: "150px", objectFit: "cover" }}
-                            />
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, idx, "existing")}
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleDrop(e, idx, "existing")}
+                                style={{
+                                    position: "relative",
+                                    cursor: "move",
+                                    border: "2px dashed transparent",
+                                    borderRadius: "8px"
+                                }}
+                                onDragEnter={(e) => e.currentTarget.style.border = "2px dashed #007bff"}
+                                onDragLeave={(e) => e.currentTarget.style.border = "2px dashed transparent"}
+                            >
+                                <img
+                                    src={img.url}
+                                    alt={`Product ${idx + 1}`}
+                                    style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px" }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => removeExistingImage(idx)}
+                                    style={{
+                                        position: "absolute",
+                                        top: "5px",
+                                        right: "5px",
+                                        background: "red",
+                                        color: "white",
+                                        border: "none",
+                                        borderRadius: "50%",
+                                        width: "25px",
+                                        height: "25px",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center"
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
                         ))}
                     </div>
 
-                    <label htmlFor="images" className="bold">Add New Images:</label>
-                    <input type="file" multiple onChange={handleFileChange} />
+                    <label htmlFor="images" className="bold">New Images:</label>
+                    <div style={{ display: "flex", gap: "10px", marginBottom: "10px", flexWrap: "wrap" }}>
+                        {newImagePreviews.map((preview, idx) => (
+                            <div
+                                key={preview.id}
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, idx, "new")}
+                                onDragOver={handleDragOver}
+                                onDrop={(e) => handleDrop(e, idx, "new")}
+                                style={{
+                                    position: "relative",
+                                    cursor: "move",
+                                    border: "2px dashed transparent",
+                                    borderRadius: "8px"
+                                }}
+                                onDragEnter={(e) => e.currentTarget.style.border = "2px dashed #007bff"}
+                                onDragLeave={(e) => e.currentTarget.style.border = "2px dashed transparent"}
+                            >
+                                <img
+                                    src={preview.url}
+                                    alt={`New ${idx + 1}`}
+                                    style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px" }}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => removeNewImage(idx)}
+                                    style={{
+                                        position: "absolute",
+                                        top: "5px",
+                                        right: "5px",
+                                        background: "red",
+                                        color: "white",
+                                        border: "none",
+                                        borderRadius: "50%",
+                                        width: "25px",
+                                        height: "25px",
+                                        cursor: "pointer",
+                                        fontSize: "14px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center"
+                                    }}
+                                >
+                                    ×
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    <label htmlFor="images" className="bold">Add More Images:</label>
+                    <input type="file" multiple onChange={handleFileChange} accept="image/*" />
 
                     <input type="submit" value="Save" />
                 </form >
