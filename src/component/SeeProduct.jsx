@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowBack, LocalShipping, Security, CreditCard, ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { useCart } from "../context/CartContext";
@@ -14,6 +14,12 @@ export const SeeProduct = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  
+  //Reset img select
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [product?.id]);
+
   const allProducts = useProducts();
 
   if (!product) {
@@ -27,12 +33,14 @@ export const SeeProduct = () => {
     );
   }
 
-  // Simulamos múltiples imágenes del producto
-  const productImages = [img, img, img, img];
+  // Use img product
+  const productImages = product.images && product.images.length > 0
+    ? product.images.map(image => image.url)
+    : [img];
 
-  // Filtrar productos similares (misma categoría, excluyendo el producto actual)
+  // Filter simila product
   const similarProducts = allProducts
-    .filter(p => p.category.name === product.category.name && p.id !== product.id); // Todos los productos similares, sin límite
+    .filter(p => p.category.name === product.category.name && p.id !== product.id);
 
   const handleAddToCart = () => {
     addToCart(product, quantity);
@@ -80,6 +88,8 @@ export const SeeProduct = () => {
           {/* Galery image*/}
           <div className="product-gallery">
             <div className="thumbnail-list">
+
+
               {productImages.map((img, index) => (
                 <img
                   key={index}
@@ -89,6 +99,9 @@ export const SeeProduct = () => {
                   onClick={() => setSelectedImage(index)}
                 />
               ))}
+
+
+
             </div>
             <div className="main-image">
               <img src={productImages[selectedImage]} alt={product.name} />
@@ -178,10 +191,10 @@ export const SeeProduct = () => {
         <div className="product-description">
           <h3>Descripción</h3>
           <div className="description-content description">
-           
-              {product.description}
-            
-            
+
+            {product.description}
+
+
 
             <h4>Especificaciones:</h4>
             <div className="specifications">
@@ -224,7 +237,12 @@ export const SeeProduct = () => {
                   {similarProducts.map((similarProduct) => (
                     <div key={similarProduct.id} className="similar-product-card">
                       <div className="similar-product-image">
-                        <img src={img} alt={similarProduct.name} />
+                        <img
+                          src={similarProduct.images && similarProduct.images.length > 0
+                            ? similarProduct.images[0].url
+                            : img}
+                          alt={similarProduct.name}
+                        />
                       </div>
                       <div className="similar-product-info">
                         <h4 className="similar-product-title">{similarProduct.name}</h4>

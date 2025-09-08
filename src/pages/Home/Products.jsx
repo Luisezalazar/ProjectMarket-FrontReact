@@ -17,16 +17,24 @@ export const Products = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const categoryFromUrl = urlParams.get('category');
+    const searchFromUrl = urlParams.get('search');
     
     if (categoryFromUrl) {
       setSelectedCategory(categoryFromUrl);
+    }
+    
+    if (searchFromUrl) {
+      setSearchTerm(searchFromUrl);
     }
   }, [location.search]);
 
   const categories = [...new Set(products.map(product => product.category.name))];
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = searchTerm === "" || 
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "" || product.category.name === selectedCategory;
     
     return matchesSearch && matchesCategory;
@@ -54,7 +62,14 @@ export const Products = () => {
         
         <div className="products-grid-container">
           <div className="products-header">
-            <h2>Nuestros productos</h2>
+            <h2>
+              {searchTerm ? `Resultados para: "${searchTerm}"` : 
+               selectedCategory ? `Categoría: ${selectedCategory}` : 
+               'Nuestros productos'}
+            </h2>
+            {(searchTerm || selectedCategory) && (
+              <p>{filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}</p>
+            )}
           </div>
           
           <div className="products-grid">

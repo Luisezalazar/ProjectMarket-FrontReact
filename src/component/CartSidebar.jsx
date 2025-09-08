@@ -85,7 +85,10 @@ export const CartSidebar = () => {
                 {items.map((item) => (
                   <div key={item.id} className="cart-item">
                     <div className="cart-item-image">
-                      <img src={img} alt={item.name} />
+                      <img 
+                        src={item.images && item.images.length > 0 ? item.images[0].url : img} 
+                        alt={item.name} 
+                      />
                     </div>
 
                     <div className="cart-item-details">
