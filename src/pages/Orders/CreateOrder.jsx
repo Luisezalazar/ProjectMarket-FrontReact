@@ -10,12 +10,12 @@ export const CreateOrder = () => {
   const [state, setState] = useState([])
   const navigate = useNavigate()
 
-  // Estados para búsqueda de clientes
+  //State for search customer
   const [customerSearch, setCustomerSearch] = useState("")
   const [showCustomerResults, setShowCustomerResults] = useState(false)
   const [filteredCustomers, setFilteredCustomers] = useState([])
 
-  // Estados para búsqueda de productos por cada item
+  //State for search products
   const [productSearches, setProductSearches] = useState({})
   const [showProductResults, setShowProductResults] = useState({})
   const [filteredProducts, setFilteredProducts] = useState({})
@@ -26,7 +26,8 @@ export const CreateOrder = () => {
     fetchProducts();
   }, [])
 
-  // Cerrar resultados de búsqueda al hacer clic fuera
+ 
+  //Close result out click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.product-item') && !event.target.closest('[style*="position: relative"]')) {
@@ -71,7 +72,8 @@ export const CreateOrder = () => {
       ...product,
       { id: "", quantity: 1 }
     ])
-    // Inicializar estados de búsqueda para el nuevo producto
+  
+    // Init state searh for new product
     setProductSearches(prev => ({ ...prev, [newIndex]: "" }))
     setShowProductResults(prev => ({ ...prev, [newIndex]: false }))
     setFilteredProducts(prev => ({ ...prev, [newIndex]: [] }))
@@ -82,7 +84,8 @@ export const CreateOrder = () => {
     newItem.splice(index, 1)
     setProduct(newItem)
     
-    // Limpiar estados de búsqueda del producto eliminado
+    
+    // Clean state search for delete product
     setProductSearches(prev => {
       const newSearches = { ...prev }
       delete newSearches[index]
@@ -106,7 +109,7 @@ export const CreateOrder = () => {
     setProduct(newItem)
   }
 
-  // Función para buscar clientes
+  //Function search customer
   const handleCustomerSearch = (value) => {
     setCustomerSearch(value)
     
@@ -201,7 +204,7 @@ export const CreateOrder = () => {
               style={{ width: '100%', padding: '8px', marginBottom: '5px' }}
             />
             
-            {/* Resultados de búsqueda de clientes */}
+            {/*Result search customers*/}
             {showCustomerResults && filteredCustomers.length > 0 && (
               <div style={{
                 position: 'absolute',
@@ -245,12 +248,7 @@ export const CreateOrder = () => {
             )}
           </div>
           
-          <select id="customer" value={selectCustomer} onChange={(e) => setSelectCustomer(e.target.value)} required>
-            <option value="">Seleccionar cliente...</option>
-            {customers.map((c) => (
-              <option key={c.id} value={c.id}>{c.id}-{c.name} {c.lastName || ''}</option>
-            ))}
-          </select>
+          
 
           {/* Product and quantity*/}
 
@@ -258,7 +256,7 @@ export const CreateOrder = () => {
             {product.map((item, index) => (
               <div key={index} className="product-item" style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
                 
-                {/* Búsqueda de productos */}
+                {/* Search products*/}
                 <div style={{ position: 'relative', marginBottom: '10px' }}>
                   <input
                     type="text"
@@ -268,7 +266,7 @@ export const CreateOrder = () => {
                     style={{ width: '100%', padding: '8px', marginBottom: '5px' }}
                   />
                   
-                  {/* Resultados de búsqueda de productos */}
+                  {/* Result search products */}
                   {showProductResults[index] && filteredProducts[index]?.length > 0 && (
                     <div style={{
                       position: 'absolute',
@@ -315,12 +313,7 @@ export const CreateOrder = () => {
                   )}
                 </div>
 
-                <select name="product" required value={String(item.id)} onChange={(e) => handleProductChange(index, "id", e.target.value)}>
-                  <option value="">Seleccionar producto...</option>
-                  {allProducts.map((p) => (
-                    <option key={p.id} value={p.id}>{p.name} - ${p.price.toLocaleString()}</option>
-                  ))}
-                </select>
+                
                 
                 <input type="number" name="count" min="1" placeholder="Cantidad" required value={item.quantity}
                   onChange={(e) => handleProductChange(index, "quantity", e.target.value)} 

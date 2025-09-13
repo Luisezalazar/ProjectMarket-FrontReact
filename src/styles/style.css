@@ -60,11 +60,13 @@ html,
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
 }
 
-/* Barra de búsqueda */
+/* SearchBar */
 .searchBar {
     position: relative;
     width: 400px;
     max-width: 400px;
+    
+   
 }
 
 .searchBar-mobile {
@@ -75,7 +77,7 @@ html,
 .search-input-navbar {
     width: 100%;
     padding: 10px 40px 10px 15px;
-    border: 2px solid rgba(0, 0, 0, 0.1);
+    border: 2px solid rba(0, 0, 0, 0.1);
     border-radius: 25px;
     font-size: 14px;
     background-color: white;
@@ -96,6 +98,26 @@ html,
     color: #666;
     pointer-events: none;
 }
+
+
+.pagination .page-link {
+    color: white;
+    background-color: orange;
+    border: 1px solid orange;
+  }
+  
+  /* Hover */
+  .pagination .page-link:hover {
+    background-color: #ff9933; /* naranja más fuerte */
+    border-color: #ff9933;
+  }
+  
+  /* Activo */
+  .pagination .page-item.active .page-link {
+    background-color: var(--navbar-color) ;/* naranja oscuro */
+    border-color: #cc6600;
+    color: black;
+  }
 
 /* Enlaces de navegación */
 .navbar-nav .nav-link {
@@ -417,7 +439,8 @@ h3 {
 }
 
 .modelImg {
-    width: 300px;
+    width: 400px;
+    height: 500px;
 }
 
 .map {
@@ -889,6 +912,7 @@ input[type=submit]:hover {
     font-size: 18px;
 }
 
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .products-grid {
@@ -911,7 +935,10 @@ input[type=submit]:hover {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
-
+    .modelImg{
+        height: 350px;
+        width: 300px;
+    }
 }
 
 @media (max-width: 640px) {

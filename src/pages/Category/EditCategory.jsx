@@ -7,12 +7,11 @@ export const EditCategory = () => {
 
     const [formulary, setFormulary] = useState({
         name: "",
-        images: []
+        image: null
     })
 
-    const [existingImages, setExistingImages] = useState([])
-    const [newImagePreviews, setNewImagePreviews] = useState([])
-    const [imagesToDelete, setImagesToDelete] = useState([])
+    const [existingImage, setExistingImage] = useState(null)
+    const [newImagePreview, setNewImagePreview] = useState(null)
 
     const navigate = useNavigate();
 
@@ -24,11 +23,12 @@ export const EditCategory = () => {
                 const data = await response.json()
                 setFormulary({
                     name: data.name,
-                    images: []
+                    image: null
                 })
-                // Assuming the API returns images array, if it's a single image, convert to array
-                const images = data.images || (data.urlImage ? [{ id: 1, url: data.urlImage }] : [])
-                setExistingImages(images)
+                // Set existing image if it exists
+                if (data.urlImage) {
+                    setExistingImage(data.urlImage)
+                }
             } catch (error) {
                 console.error("Error loading Category: ", error)
             }
@@ -39,11 +39,12 @@ export const EditCategory = () => {
     // Cleanup memory on unmount
     useEffect(() => {
         return () => {
-            newImagePreviews.forEach(preview => {
-                URL.revokeObjectURL(preview.url)
-            })
+            if (newImagePreview) {
+                URL.revokeObjectURL(newImagePreview)
+            }
         }
     }, [])
+
     // Form values
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -54,60 +55,61 @@ export const EditCategory = () => {
     }
 
     const handleFileChange = (e) => {
-        const files = Array.from(e.target.files)
-        setFormulary(prev => ({
-            ...prev,
-            images: files
-        }))
+        const file = e.target.files[0]
+        if (file) {
+            // Clean up previous preview
+            if (newImagePreview) {
+                URL.revokeObjectURL(newImagePreview)
+            }
 
-        // Create previews for new images
-        const previews = files.map(file => ({
-            file,
-            url: URL.createObjectURL(file),
-            id: Date.now() + Math.random()
-        }))
-        setNewImagePreviews(prev => [...prev, ...previews])
+            setFormulary(prev => ({
+                ...prev,
+                image: file
+            }))
+
+            // Create preview for new image
+            setNewImagePreview(URL.createObjectURL(file))
+        }
     }
 
     // Remove existing image
-    const removeExistingImage = (index) => {
-        const imageToDelete = existingImages[index]
-        setImagesToDelete(prev => [...prev, imageToDelete.id])
-        setExistingImages(prev => prev.filter((_, i) => i !== index))
+    const removeExistingImage = () => {
+        setExistingImage(null)
     }
 
     // Remove new image preview
-    const removeNewImage = (index) => {
-        const imageToRemove = newImagePreviews[index]
-        URL.revokeObjectURL(imageToRemove.url) // Clean up memory
-        setNewImagePreviews(prev => prev.filter((_, i) => i !== index))
+    const removeNewImage = () => {
+        if (newImagePreview) {
+            URL.revokeObjectURL(newImagePreview)
+        }
+        setNewImagePreview(null)
         setFormulary(prev => ({
             ...prev,
-            images: prev.images.filter((_, i) => i !== index)
+            image: null
         }))
     }
-
-
-
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        console.log("Submitting category update:", {
+            name: formulary.name,
+            hasNewImage: !!formulary.image,
+            hasExistingImage: !!existingImage
+        })
+
         const formData = new FormData()
         formData.append("name", formulary.name)
 
-        // Add images to delete
-        if (imagesToDelete.length > 0) {
-            formData.append("imagesToDelete", JSON.stringify(imagesToDelete))
+        // Add new image if selected
+        if (formulary.image) {
+            formData.append("image", formulary.image)
+            console.log("Adding image:", formulary.image.name)
         }
 
-
-
-        // Add new images
-        if (formulary.images && formulary.images.length > 0) {
-            for (let i = 0; i < formulary.images.length; i++) {
-                formData.append("images", formulary.images[i])
-            }
+        // Keep existing image URL if no new image and existing image wasn't removed
+        if (!formulary.image && existingImage) {
+            formData.append("urlImage", existingImage)
         }
 
         try {
@@ -116,14 +118,25 @@ export const EditCategory = () => {
                 body: formData
             })
 
-            const result = await response.json()
-            console.log(result)
-            navigate("/*")
+            if (!response.ok) {
+                const errorText = await response.text()
+                console.error("Server error:", errorText)
+                throw new Error(`HTTP error! status: ${response.status}`)
+            }
+
+            const contentType = response.headers.get("content-type")
+            if (contentType && contentType.includes("application/json")) {
+                const result = await response.json()
+                console.log("Category updated successfully:", result)
+                navigate("/*")
+            } else {
+                // If response is not JSON, just navigate on success
+                navigate("/*")
+            }
         } catch (error) {
             console.error("Error updating category: ", error)
         }
     }
-
 
     return (
         <div className="showcase">
@@ -134,90 +147,94 @@ export const EditCategory = () => {
                     <label htmlFor="name" className="bold">Name: </label>
                     <input type="text" name="name" onChange={handleChange} value={formulary.name} placeholder=" " required />
 
-                    <label htmlFor="images" className="bold">Imágenes Existentes:</label>
-                    <div style={{ display: "flex", gap: "10px", marginBottom: "10px", flexWrap: "wrap" }}>
-                        {existingImages.map((img, idx) => (
-                            <div
-                                key={idx}
-                                style={{
-                                    position: "relative",
-                                    borderRadius: "8px"
-                                }}
-                            >
-                                <img
-                                    src={img.url}
-                                    alt={`Category ${idx + 1}`}
-                                    style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px" }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => removeExistingImage(idx)}
+                    {existingImage && (
+                        <>
+                            <label className="bold">Imagen Actual:</label>
+                            <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                                <div
                                     style={{
-                                        position: "absolute",
-                                        top: "5px",
-                                        right: "5px",
-                                        background: "red",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "50%",
-                                        width: "25px",
-                                        height: "25px",
-                                        cursor: "pointer",
-                                        fontSize: "14px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center"
+                                        position: "relative",
+                                        borderRadius: "8px"
                                     }}
                                 >
-                                    ×
-                                </button>
+                                    <img
+                                        src={existingImage}
+                                        alt="Category"
+                                        style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px" }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={removeExistingImage}
+                                        style={{
+                                            position: "absolute",
+                                            top: "5px",
+                                            right: "5px",
+                                            background: "red",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            width: "25px",
+                                            height: "25px",
+                                            cursor: "pointer",
+                                            fontSize: "14px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center"
+                                        }}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    )}
 
-                    <label htmlFor="images" className="bold">Nuevas Imágenes:</label>
-                    <div style={{ display: "flex", gap: "10px", marginBottom: "10px", flexWrap: "wrap" }}>
-                        {newImagePreviews.map((preview, idx) => (
-                            <div
-                                key={preview.id}
-                                style={{
-                                    position: "relative",
-                                    borderRadius: "8px"
-                                }}
-                            >
-                                <img
-                                    src={preview.url}
-                                    alt={`New ${idx + 1}`}
-                                    style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px" }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => removeNewImage(idx)}
+                    {newImagePreview && (
+                        <>
+                            <label className="bold">Nueva Imagen:</label>
+                            <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                                <div
                                     style={{
-                                        position: "absolute",
-                                        top: "5px",
-                                        right: "5px",
-                                        background: "red",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "50%",
-                                        width: "25px",
-                                        height: "25px",
-                                        cursor: "pointer",
-                                        fontSize: "14px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center"
+                                        position: "relative",
+                                        borderRadius: "8px"
                                     }}
                                 >
-                                    ×
-                                </button>
+                                    <img
+                                        src={newImagePreview}
+                                        alt="New"
+                                        style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px" }}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={removeNewImage}
+                                        style={{
+                                            position: "absolute",
+                                            top: "5px",
+                                            right: "5px",
+                                            background: "red",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "50%",
+                                            width: "25px",
+                                            height: "25px",
+                                            cursor: "pointer",
+                                            fontSize: "14px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center"
+                                        }}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    )}
 
-                    <label htmlFor="images" className="bold">Agregar Más Imágenes:</label>
-                    <input type="file" multiple onChange={handleFileChange} accept="image/*" />
+                    <label htmlFor="image" className="bold">
+                        {existingImage || newImagePreview ? "Cambiar Imagen:" : "Agregar Imagen:"}
+                    </label>
+                    <input type="file" onChange={handleFileChange} accept="image/*" />
 
                     <input type="submit" value="Save" />
                 </form >

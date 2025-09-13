@@ -33,7 +33,7 @@ export const Home = () => {
 
       {/*Other models*/}
       <h1 className="intro"><strong>Otras categorias</strong></h1>
-      <h5 className="intro">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aspernatur perferendis praesentium nesciunt quo totam tenetur tempore cupiditate fugit omnis! Quae?</h5>
+      
 
       <section className="otherProducts">
         <OtherProducts />

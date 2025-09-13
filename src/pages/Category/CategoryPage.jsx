@@ -41,11 +41,7 @@ export const CategoryPage = () => {
     <div className="showcase">
       <h1 className="intro">Welcome to interface for Categories</h1>
       <h3>List Categories</h3>
-      <div className="button-center">
-        <NavLink to='/createCategory'> 
-          <button className="button">Create Category</button>
-        </NavLink>
-      </div>
+      
       <div>
         <table>
           <thead>

@@ -7,14 +7,14 @@ export const OrdersPage = () => {
     const [orders, setOrders] = useState([])
     const [productsCache, setProductsCache] = useState({})
 
+    const [searchTerm, setSearchTerm] = useState("") // search
+    const [currentPage, setCurrentPage] = useState(1) // page current
+    const itemsPerPage = 6
+
     //GET
     const fectOrders = async () => {
         const response = await fetch("http://localhost:3000/api/order/getOrder")
         const data = await response.json()
-        console.log("Orders data structure:", data)
-        if (data.length > 0) {
-            console.log("First order structure:", data[0])
-        }
         setOrders(data)
 
         // Obtener información de productos para todos los ItemOrders
@@ -36,13 +36,10 @@ export const OrdersPage = () => {
             }
         })
 
-        console.log("Product IDs to fetch:", Array.from(productIds))
-
         // Obtener información de cada producto
         const newProductsCache = {}
         for (const productId of productIds) {
             try {
-                console.log(`Fetching product ${productId}...`)
                 const response = await fetch(`http://localhost:3000/api/product/getProducts/${productId}`)
 
                 if (!response.ok) {
@@ -50,7 +47,6 @@ export const OrdersPage = () => {
                 }
 
                 const productData = await response.json()
-                console.log(`Product ${productId} data:`, productData)
                 newProductsCache[productId] = productData
             } catch (error) {
                 console.error(`Error fetching product ${productId}:`, error)
@@ -62,8 +58,6 @@ export const OrdersPage = () => {
                 }
             }
         }
-
-        console.log("Final products cache:", newProductsCache)
         setProductsCache(newProductsCache)
     }
     //Delete
@@ -73,7 +67,6 @@ export const OrdersPage = () => {
                 method: 'DELETE',
             })
             const data = await response.json()
-            //console.log("Order delete: ", data)
 
         } catch (error) {
             console.error("Error deleting order: ", error
@@ -97,12 +90,10 @@ export const OrdersPage = () => {
                 body: JSON.stringify({ state: newState })
             });
             const result = await response.json()
-            //console.log("State uptaded: ", result)
 
 
         } catch (error) {
             console.error("Error update state: ", error)
-            //Error in updated 
             setOrders(prevOrders =>
                 prevOrders.map(order =>
                     order.id === id ? { ...order, state: newState } : order
@@ -112,6 +103,23 @@ export const OrdersPage = () => {
     }
 
 
+    //Filter orders for search
+    const filteredOrder = [...orders]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .filter(o =>
+        o.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    console.log("ete: ",filteredOrder)
+    //Limit page
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentOrders = filteredOrder.slice(indexOfFirstItem, indexOfLastItem)
+    const totalPages = Math.ceil(filteredOrder.length / itemsPerPage)
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber)
+    }
+
     useEffect(() => {
         fectOrders()
     }, [])
@@ -120,12 +128,34 @@ export const OrdersPage = () => {
         <div className="showcase">
             <h1 className="intro">Welcome to interface for Order</h1>
             <h3>List Orders</h3>
-            <div className="button-center">
-                <NavLink to="/createOrder"><button className="button">Create Order</button></NavLink>
+
+            {/* Search */}
+            <div className="row mb-3">
+                <div className="col-md-6">
+                    <input
+                        type="text"
+                        className='searchBar border border-dark'
+                        placeholder='Buscar por nombre o categoria'
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value)
+                            setCurrentPage(1)
+                        }} />
+                </div>
             </div>
-            <div>
-                <table>
-                    <thead>
+
+            {/* Botón crear */}
+            <div className="mb-3">
+                <NavLink to='/createOrder'>
+                    <button className="button">Create Order</button>
+                </NavLink>
+            </div>
+
+
+            {/* Tabla */}
+            <div className="table-responsive">
+                <table className="table table-bordered table-striped">
+                    <thead className="table-dark">
                         <tr>
                             <th>Customer</th>
                             <th>Date</th>
@@ -136,7 +166,7 @@ export const OrdersPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {orders.map(order => {
+                        {currentOrders.map(order => {
 
 
                             return (
@@ -150,7 +180,7 @@ export const OrdersPage = () => {
                                             const day = String(date.getDate()).padStart(2, '0');
                                             const hours = String(date.getHours()).padStart(2, '0');
                                             const minutes = String(date.getMinutes()).padStart(2, '0');
-                                            return `${year}/${month}/${day} - ${hours}:${minutes}`;
+                                            return `${day}/${month}/${year} - ${hours}:${minutes}`;
                                         })()}
                                     </td>
                                     <td>
@@ -176,17 +206,12 @@ export const OrdersPage = () => {
                                                         const subtotal = itemOrder.subtotal;
 
                                                         // Obtener información del producto desde el cache
-                                                        console.log(`Looking for product ${productId} in cache:`, productsCache[productId])
-                                                        console.log("Current productsCache:", productsCache)
-
                                                         const product = productsCache[productId] || {
                                                             id: productId,
                                                             name: `Producto ${productId}`,
                                                             price: 0,
                                                             images: []
                                                         };
-
-                                                        console.log(`Using product for ${productId}:`, product)
 
                                                         return (
                                                             <div
@@ -260,8 +285,20 @@ export const OrdersPage = () => {
                                     </td>
                                     <td>${order.total?.toLocaleString()}</td>
                                     <td>
-                                        <button type='button' className='button-img' onClick={() => handleDelete(order.id)}><img className='img' src="/img/eliminar.png" /></button>
-                                        <NavLink to={`/editOrder/${order.id}`} ><button type='button' className='button-img'><img className='img' src="/img/boton-editar.png" /></button></NavLink>
+                                        <button
+                                            type='button'
+                                            className='btn btn-danger btn-sm me-2'
+                                            onClick={() => handleDelete(order.id)}
+                                        >
+                                            <img src="/img/eliminar.png" alt="Eliminar" style={{ width: "20px" }} />
+                                        </button>
+
+
+                                        <NavLink to={`/editProduct/${order.id}`}>
+                                            <button type='button' className='btn btn-warning btn-sm'>
+                                                <img src="/img/boton-editar.png" alt="Editar" style={{ width: "20px" }} />
+                                            </button>
+                                        </NavLink>
                                     </td>
                                 </tr>
                             );
@@ -270,6 +307,23 @@ export const OrdersPage = () => {
 
                 </table>
             </div>
+
+
+            {/* Paginación */}
+            <nav>
+                <ul className="pagination justify-content-center">
+                    {Array.from({ length: totalPages }, (_, idx) => (
+                        <li
+                            key={idx + 1}
+                            className={`page-item ${currentPage === idx + 1 ? 'active' : ''}`}
+                        >
+                            <button className="page-link " onClick={() => handlePageChange(idx + 1)}>
+                                {idx + 1}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            </nav>
         </div>
     )
 }
